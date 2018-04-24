@@ -1,17 +1,17 @@
-public var myCommand: List<String> = listOf()
-public var myMap: MutableMap<String, String> = mutableMapOf()
+﻿var myCommand: List<String> = listOf()
+var myMap: MutableMap<String, String> = mutableMapOf()
 
-fun my_search(myFunc: String){
+fun mySearch(myFunc: String){
     if (myCommand.size < 2)
         println("В команде $myFunc отсутствуют необходимые параметры!")
     else {
-        val tmpMap = myMap.filter { it.key.contains(if (myCommand[1].equals("*")) "" else if (myCommand[1].equals("\\*")) "*" else myCommand[1]) and
+        val tmpMap = myMap.filter { it.key.contains(if (myCommand[1] == "*") "" else if (myCommand[1] == "\\*") "*" else myCommand[1]) and
                 (if (myCommand.size > 2) it.value.contains(myCommand[2]) else true)}
-        if (tmpMap.size > 0){
-            println("По заданным параметрам поиска в базе данных обнаружены " + (if (myFunc.equals("удаления")) "и удалены " else "") + "записи:")
+        if (tmpMap.isNotEmpty()){
+            println("По заданным параметрам поиска в базе данных обнаружены " + (if (myFunc == "удаления") "и удалены " else "") + "записи:")
             for (prnItem in tmpMap) {
                 println(prnItem.key + " " + prnItem.value)
-                if (myFunc.equals("удаления"))
+                if (myFunc == "удаления")
                     myMap.remove(prnItem.key)
             }
         }
@@ -35,14 +35,14 @@ fun main(args: Array<String>) {
     var myLoop = true
     while (myLoop){
         println("\n$strInput")
-        myCommand = readLine()!!.split(' ')
+        myCommand = readLine()!!.split(" +".toRegex())
         when (myCommand[0].toLowerCase()){
             "exit", "x", "q", "break", "quit" -> myLoop = false
             "add", "put", "p" -> {
                 if (myCommand.size < 2)
                     println("В команде добавления отсутствует ключ!")
                 else {
-                    if (myMap.filter { it.key.contains(myCommand[1])}.size > 0){
+                    if (myMap.filter { it.key.contains(myCommand[1])}.isNotEmpty()){
                         println("В паре с ключом " + myCommand[1] + " значение изменено на " + (if (myCommand.size > 2) myCommand[2]
                         else "\"\""))
                     }
@@ -53,8 +53,8 @@ fun main(args: Array<String>) {
                     myMap.put(myCommand[1], if (myCommand.size > 2) myCommand[2] else "")
                 }
             }
-            "del", "delete", "d" ->  my_search("удаления")
-            "find", "search", "f" -> my_search("поиска")
+            "del", "delete", "d" ->  mySearch("удаления")
+            "find", "search", "f" -> mySearch("поиска")
             else -> println(strHelp)
         }
     }
